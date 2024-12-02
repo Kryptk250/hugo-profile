@@ -1,4 +1,4 @@
-name: Deploy to Azure App Service
+name: Node.js App Deployment
 
 on:
   push:
@@ -9,15 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '16'
-      - run: npm install
-      - run: npm run build
-
-      - name: Deploy to Azure Web App
+          node-version: '18'
+      - name: Install Dependencies
+        run: npm install
+      - name: Build and Deploy
         uses: azure/webapps-deploy@v2
         with:
-          app-name: 'your-app-service-name'
+          app-name: 'MyWebApp1234'
           publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
-          package: ./build # Adjust the path to your build output
+          package: ./dist # Adjust the path to your build output directory
