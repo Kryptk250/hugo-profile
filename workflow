@@ -1,32 +1,23 @@
-name: Deploy Node.js app to Azure
+name: Deploy to Azure App Service
 
 on:
   push:
-    branches:
-      - main
+    branches: [master]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - run: npm install
+      - run: npm run build
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v2
-      with:
-        node-version: '18'
-
-    - name: Install dependencies
-      run: npm install  # Ensure package.json is present in the directory
-
-    - name: Build the application (if needed)
-      run: npm run build
-
-    - name: Deploy to Azure Web App
-      uses: azure/webapps-deploy@v2
-      with:
-        app-name: <your-app-name>  # Replace with your Azure App Service name
-        publish-profile: ${{ secrets.AZURE_PUBLISH_PROFILE }}  # Azure publish profile secret
-        package: .  # Deploy the current directory
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'your-app-service-name'
+          publish-profile: ${{ secrets.AZURE_APP_SERVICE_PUBLISH_PROFILE }}
+          package: ./build # Adjust the path to your build output
